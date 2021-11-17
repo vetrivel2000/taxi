@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>BookYourComfortness!!</title>
+<style>
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<h2 style="color:#610094; text-align:center;">ZOLA TAXIS</h2>
+<img src="TaxiLogo.png" onclick="window.history.go(0)" style="display: block;margin-left: auto;margin-right: auto;width: 10%;">
+<table align="center">
+<tr>
+<td><button style="width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px; cursor: pointer;" id="userlogin"  name="users" value="login">Log In</button></td>
+</tr>
+<tr>
+<td><button style="width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px; cursor: pointer;" id="adduser" name="users" value="register">Register</button></td>
+</tr>
+</table>
+<div id="taxiinfo" class="hidediv"></div>
+<div id="userinfo" class="hidediv"></div>
+<div id="bookinfo" class="hidediv"></div>
+<div id="createtaxi" class="hidediv"></div>
+<div id="createuser" class="hidediv"></div>
+<div id="historydiv" class="hidediv"></div>
+<div id="userHistorydiv" class="hidediv"></div>
+<div id="taxiHistorydiv" class="hidediv"></div>
+<div id="renderuserlogin" class="hidediv"></div>
+<div id="renderuserhome" class="hidediv"></div>
+<div id="renderadminhome" class="hidediv"></div>
+<div id="rendertaxihome" class="hidediv"></div>
+<div id="renderuserhistory" class="hidediv"></div>
+<div id="rendertaxihistory" class="hidediv"></div>
+<div id="renderbookedTaxis" class="hidediv"></div>
+<div id="addingmoney" class="hidediv"></div>
+<div id="cancellingtaxi" class="hidediv"></div>
+<div id="renderfeedback" class="hidediv"></div>
+<div id="rendercoupon" class="hidediv"></div>
+<div id="taxiearnings" class="hidediv"></div>
+<p id="successmessagetaxi" class="hidealerts" style="color:red" align="center"></p>
+<p id="successmessagelogin" class="hidealerts" style="color:red" align="center"></p>
+<p id="mobilecheck" class="hidealerts" style="color:red" align="center"></p>
+<p id="amountcheck" class="hidealerts" style="color:red" align="center"></p>
+<p id="passwordcheck" class="hidealerts" style="color:red" align="center"></p>
+<p id="successmessageuser" class="hidealerts" style="color:red" align="center"></p>
+<p id="successfullbooking" class="hidealerts" style="color:red" align="center"></p>
+<p id="successfulladding" class="hidealerts" style="color:red" align="center"></p>
+<p id="successfullcancelling" class="hidealerts" style="color:red" align="center"></p>
+<p id="successfullfeedback" class="hidealerts" style="color:red" align="center"></p>
+<p id="successfullcoupon" class="hidealerts" style="color:red" align="center"></p>
+<p id="errornumber" class="hidealerts" style="color:red" align="center"></p>
+<p id="erroramount" class="hidealerts" style="color:red" align="center"></p>
+<p id="errortiming" class="hidealerts" style="color:red" align="center"></p>
+<p id="errorpoints" class="hidealerts" style="color:red" align="center"></p>
+<script type="text/javascript">
+function checkmobile(txt)
+{
+  var phoneno = /^\d{10}$/;
+  if((txt.match(phoneno)))
+    {
+      return true;
+    }
+   else
+    {
+       return false;
+    }
+}
+function checkamount(txt)
+{
+	if(txt<10)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+function checkpassword(txt) 
+{ 
+var decimal=  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+if(txt.match(decimal)) 
+{ 
+return true;
+}
+else
+{ 
+return false;
+}
+}
+function showPassword() {
+	  var x = document.getElementById("pword");
+	  var y = document.getElementById("cpword");
+	  if (x.type === "password" && y.type === "password") {
+	    x.type = "text";
+	    y.type = "text";
+	  } else {
+	    x.type = "password";
+	    y.type = "password";
+	  }
+	}
+function showPasswordforLogIn(){
+	var x = document.getElementById("login-password");
+	if(x.type==="password")
+	{
+		x.type="text";
+	}
+	else
+	{
+		x.type = "password";
+	}
+}
+function validatewallet(amount)
+{
+	let text;
+	if(amount=="")
+	{
+		text="Please enter some money";
+		document.getElementById("demowallet").innerHTML = text;
+		return false;
+	}
+	else
+    {
+		text="";
+		document.getElementById("demowallet").innerHTML = text;
+		return true;
+    }
+}
+function validatetiming(time)
+{
+	if(isNaN(time) || time>24)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+function validateLogIn(mobile,password)
+{
+	let text;
+	if(mobile==""||password=="")
+	{
+		text="Please input all fields";
+		document.getElementById("demologin").innerHTML = text;
+		return false;
+	}
+	else
+    {
+		text="";
+		document.getElementById("demologin").innerHTML = text;
+		return true;
+    }
+}
+function validateUser(mobile,name,wallet,password)
+{
+	let text;
+	if(mobile=="" || name=="" || wallet=="" || password=="")
+	{
+		text="Please input all fields";
+		document.getElementById("demomobile").innerHTML = text;
+		return false;
+	}
+	else
+    {
+		text="";
+		document.getElementById("demomobile").innerHTML = text;
+		return true;
+    }
+}
+function loginpage()
+{
+     $(".hidediv").hide();
+	 $(".hidealerts").hide();
+	var mobile=$("#login-mobilenumber").val();
+	var password=$("#login-password").val();
+	var validateresult=validateLogIn(mobile,password);
+	if(validateresult)
+	{
+		$.ajax({
+			type:'POST',
+			url:'/Taxi-Version2/connection?mobilenumber='+mobile+'&password='+password+'&users=LoginSubmit',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result){
+				if(result==="user")
+				{
+					var form="<marquee style='color:red;'>Welcome "+result+"</marquee>";
+				    form+="<table align='center'><tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='book' name='users' value='Book'>Book</button></td></tr>";
+				    form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='add' name='users' value='addmoney'>AddMoney</button></td></tr>";
+				    form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='cancel' name='users' value='canceltaxi'>CancelTaxi</button></td></tr>";
+				    form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='historyofthisuser' name='users' value='canceltaxi'>MyHistory</button></td></tr>";
+				    form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='logoutuser' name='users' value='logout'>LogOut</button></td></tr></table>";
+				    $("#renderuserhome").html(form);
+				    $("#renderuserhome").show();
+				}
+				else if(result==="admin")
+				{
+					var form="<marquee style='color:red;'>Welcome "+result+"</marquee>";
+					form+="<table align='center'><tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='taxi' name='users' value='Taxi'>Taxi</button></td></tr>";
+					form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='user' name='users' value='User'>User</button></td></tr>";
+					form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='history' name='users' value='check'>History</button></td></tr>";
+					form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='adminlogout' name='users' value='logout'>LogOut</button></td></tr></table>";
+					$("#renderadminhome").html(form);
+					$("#renderadminhome").show();
+				}
+				else if(result!="user" && result!="admin" && result!="Invalid Credentials")
+				{
+					var form="<marquee style='color:red;'>Welcome "+result+"</marquee>";
+					form+="<table align='center'><tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='historyofthistaxi' name='users' value='Taxi'>History</button></td></tr>";
+					form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='earningsoftaxi' name='users' value='User'>Earnings</button></td></tr>";
+					form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='taxilogout' name='users' value='logout'>LogOut</button></td></tr></table>";
+					$("#rendertaxihome").html(form);
+					$("#rendertaxihome").show();
+				}
+				else
+				{
+					$("#renderuserlogin").show();
+					$("#successmessagelogin").html(result);
+					$("#successmessagelogin").show();
+				}
+			}
+		});
+	}
+	else
+	{
+		$("#renderuserlogin").show();
+	}
+}
+function userslist()
+{
+	 $(".hidediv").hide();
+	 $(".hidealerts").hide();
+	$.ajax({
+		type:'GET',
+		url:'/Taxi-Version2/connection?users=User',
+		headers:{
+			Accept:"application/json; charset=utf-8",
+			"Content-Type" : "application/json; charset=utf-8"
+		},	
+		success:function(result){
+			var tbltop = "<table style='border-collapse: collapse;' align='center' width='100%'><tr style='border-bottom: 0.5px solid #ddd;border-top: 0.5px solid #ddd;'><th>UserId</th><th>Name</th><th>MobileNumber</th><th>Wallet</th></tr>";
+			var main ="";
+	            for (i = 0; i < result.length; i++){
+	              main += "<tr style='border-bottom: 0.5px solid #ddd; text-align:center;'><td>"+result[i].userId+"</td><td>"+result[i].userName+"</td><td>"+result[i].mobileNumber+"</td><td>"+result[i].wallet+"</td></tr>";
+	            }
+	            var tblbottom = "</table><br><br><table align='center' width='100%'><tr><th><th><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='gobackfromusers'>Back</button></th></tr></table>";
+	            var tbl = tbltop + main + tblbottom;
+	            $("#userinfo").html(tbl);
+	            $("#userinfo").show();
+		}
+	});
+}
+function taxilist()
+{
+	 $(".hidediv").hide();
+	 $(".hidealerts").hide();
+	$.ajax({
+		type:'GET',
+		url:'/Taxi-Version2/connection?users=Taxi',
+		headers:{
+			Accept:"application/json; charset=utf-8",
+			"Content-Type" : "application/json; charset=utf-8"
+		},		
+		success:function(result){
+			var tbltop ="<table style='border-collapse: collapse;' align='center' width='100%'><tr style='border-bottom: 0.5px solid #ddd;border-top: 0.5px solid #ddd;'><th>TaxiId</th><th>FreeTime</th><th>CurrentPoint</th><th>Earnings</th><th>MobileNumber</th></tr>";
+			var main ="";
+	            for (i = 0; i < result.length; i++){
+	              main += "<tr style='border-bottom: 0.5px solid #ddd; text-align:center;'><td>"+result[i].id+"</td><td>"+result[i].freeTime+"</td><td>"+result[i].currentPoint+"</td><td>"+result[i].totalEarnings+"</td><td>"+result[i].mobileNumber+"</td></tr>";
+	            }
+	            var tblbottom = "</table><table width=100%><tr><th><th><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='gobackfromtaxi'>Back</button></th></tr></table>";
+	            var tbl = tbltop + main + tblbottom;
+	            $("#taxiinfo").html(tbl);	
+	            $("#taxiinfo").show();
+		}
+	});
+}
+$(document).ready(function(){
+	$(document).on('click','#userlogin',function(){
+		$("#userlogin").hide();
+		$("#adduser").hide();
+		var form="<h2 align='center'>Login</h2><table align='center'><tr style='line-height: 50px;'>";
+		form+="<td><input type='text' style=' border: 0; outline: 0;background: transparent; border-bottom: 2px solid #ddd; width:200px;' maxlength='10' placeholder='Enter MobileNumber' name='mobile' id='login-mobilenumber' required></td></tr>";
+		form+="<tr><p id='demologin' style='color:red' align='center'></p></tr><tr style='line-height: 50px;'>";
+		form+="<td><input type='password'  style=' border: 0; outline: 0;background: transparent; border-bottom: 2px solid #ddd; width:200px;' placeholder='Enter Password' name='mobile' id='login-password' required></td></tr><tr><td><input type='checkbox' onclick='showPasswordforLogIn()'>ShowPassword</td></tr>";
+	    form+="<tr style='line-height: 50px;'><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px; width:200px' id='loginuser'>LogIn</button></td></tr><tr style='line-height: 10px;'><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;width:200px' id='backfromuserlogin'>Back</button></td></tr></table>"
+	    $("#renderuserlogin").html(form); 
+	});
+	$(document).on('click','#adminlogin',loginpage);
+	$(document).on('click','#backfromuserlogin',function(){
+		window.history.go(0);
+	});
+	$(document).on('click','#logoutuser',function(){
+		window.history.go(0);
+	});
+	$(document).on('click','#adminlogout',function(){
+		window.history.go(0);
+	});
+	$(document).on('click','#taxilogout',function(){
+		window.history.go(0);
+	});
+	$(document).on('click','#loginuser',loginpage);
+	$(document).on('click','#taxi',taxilist);
+	$(document).on('click','#user',userslist);
+	$(document).on('click','#gobackfromtaxi',loginpage);
+	$(document).on('click','#gobackfromusers',loginpage);
+	$(document).on('click','#backfromadd',loginpage);
+	$(document).on('click','#backfromcancel',loginpage);
+	$(document).on('click','#add',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+	    var form="<table align='center'><tr><p id='demowallet' style='color:red' align='center'></p></tr><tr style='line-height:50px'><td><label for='wallet'><b>Wallet</b></label></td>";
+		form+="<td><input type='number' placeholder='Enter the amount' name='amount' id='newwallet' required></td></tr>";
+		form+="<tr style='line-height:50px'><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='addamount'>Add</button></td><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backfromadd'>Back</button></td></tr></table>";
+		$("#addingmoney").html(form);
+		$("#addingmoney").show();
+	});
+	$(document).on('click','#historyofthisuser',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		$.ajax({
+			type:'POST',
+			url:'/Taxi-Version2/connection?users=TakeUserHistory',
+		    success:function(result)
+		    {
+		    	var tbltop ="<table style='border-collapse: collapse;' align='center' width='100%'><tr style='border-bottom: 0.5px solid #ddd;border-top: 0.5px solid #ddd;'><th>TaxiNumber</th><th>Time</th><th>PickupPoint</th><th>DropPoint</th><th>Status</th></tr>";
+				var main ="";
+				for (i = 0; i < result.length; i++){
+					 var time=new Date(result[i].time);
+		              main += "<tr style='border-bottom: 0.5px solid #ddd; text-align:center;'><td>"+result[i].taxiNumber+"</td><td>"+time.toString()+"</td><td>"+result[i].pickupPoint+"</td><td>"+result[i].dropPoint+"</td><td>"+result[i].status+"</td></tr>";
+		            }
+				 var tblbottom = "</table><table align='center'><tr><th><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backfromgetuserhistory'>Back</button></th></tr></table>";
+		         var tbl = tbltop + main + tblbottom;
+		         $("#renderuserhistory").html(tbl);
+		         $("#renderuserhistory").show();
+		    }
+		});
+	});
+	$(document).on('click','#historyofthistaxi',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		$.ajax({
+			type:'POST',
+			url:'/Taxi-Version2/connection?users=TakeTaxiHistory',
+			 success:function(result)
+			    {
+			    	var tbltop ="<table style='border-collapse: collapse;' align='center' width='100%'><tr style='border-bottom: 0.5px solid #ddd;border-top: 0.5px solid #ddd;'><th>UserName</th><th>UserNumber</th><th>Time</th><th>PickupPoint</th><th>DropPoint</th><th>Status</th></tr>";
+					var main ="";
+					for (i = 0; i < result.length; i++){
+						 var time=new Date(result[i].time);
+			              main += "<tr style='border-bottom: 0.5px solid #ddd; text-align:center;'><td>"+result[i].userName+"</td><td>"+result[i].userNumber+"</td><td>"+time.toString()+"</td><td>"+result[i].pickupPoint+"</td><td>"+result[i].dropPoint+"</td><td>"+result[i].status+"</td></tr>";
+			            }
+					 var tblbottom = "</table><table align='center'><tr><th><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backfromgetuserhistory'>Back</button></th></tr></table>";
+			         var tbl = tbltop + main + tblbottom;
+			         $("#rendertaxihistory").html(tbl);
+			         $("#rendertaxihistory").show();
+			    }
+		});
+	});
+	$(document).on('click','#earningsoftaxi',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		$.ajax({
+			type:'POST',
+			url:'/Taxi-Version2/connection?users=GetEarningsOfTaxi',
+			success:function(result)
+			{
+				var main="<p align='center' style='color:red;'>"+result+"<p><br><br>";
+				main+="<table align='center'><tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backfromearnings' name='users' value='login'>Back</button></td></tr></table>";
+				$("#taxiearnings").html(main);
+				$("#taxiearnings").show();
+			}
+		});
+	});
+	$(document).on('click','#backfromearnings',loginpage);
+	$(document).on('click','#addamount',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		var amount=$("#newwallet").val();
+		var amountvalidate=validatewallet(amount);
+		var check=checkamount(amount);
+		if(amountvalidate && check)
+		{
+			$.ajax({
+				type:'POST',
+				url:'/Taxi-Version2/connection?amount='+amount+'&users=AddWallet',
+				headers:{
+					Accept:"application/json; charset=utf-8",
+					"Content-Type" : "application/json; charset=utf-8"
+				},
+				success:function(result){
+					$("#successfulladding").html(result);
+					$("#addingmoney").show();
+					$("#successfulladding").show();
+				}
+			});
+		}
+		else if(amountvalidate && !check)
+		{
+			$("#erroramount").html("Enter atleast 10Rs/-");
+			$("#erroramount").show();
+		}
+	});
+	$(document).on('click','#cancel',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		var mobile=$("#userlist").val();
+		$.ajax({
+			type:'POST',
+			url:'/Taxi-Version2/connection?usermobile='+mobile+'&users=ShowTaxis',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result)
+			{
+				var tbltop ="<table style='border-collapse: collapse;' align='center' width='100%'><tr style='border-bottom: 0.5px solid #ddd;border-top: 0.5px solid #ddd;'><th>TaxiNumber</th><th>Time</th><th>PickupPoint</th><th>DropPoint</th><th>Cancel</th></tr>";
+				var main ="";
+				for (i = 0; i < result.length; i++){
+					 var time=new Date(result[i].time);
+		              main += "<tr style='border-bottom: 0.5px solid #ddd; text-align:center;'><td>"+result[i].taxiNumber+"</td><td>"+time.toString()+"</td><td>"+result[i].pickupPoint+"</td><td>"+result[i].dropPoint+"</td><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='cancelbooking'value='"+result[i].bookingId+"'>Cancel</button></td></tr>";
+		            }
+				 var tblbottom = "</table><table align='center'><tr><th><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backfromcancel'>Back</button></th></tr></table>";
+		         var tbl = tbltop + main + tblbottom;
+		         $("#renderbookedTaxis").html(tbl);
+		         $("#renderbookedTaxis").show();
+			}
+		});
+	});
+	$(document).on('click','#backfromcancel',loginpage);
+	$(document).on('click','#cancelbooking',function(){
+		$(this). closest('tr'). remove();
+		var bookingId=$(this).val();
+		var mobile=$("#userlist").val();
+		$.ajax({
+			type:'POST',
+			url:'/Taxi-Version2/connection?bookingid='+bookingId+'&users=CancelTaxi',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result)
+			{
+				$("#successfullcancelling").html(result);
+				  $("#successfullcancelling").show();
+			}
+		});
+	});
+    $(document).on('click','#book',function(){
+    	 $(".hidediv").hide();
+    	 $(".hidealerts").hide();
+    	var form="<table align='center'>";
+    	form+="<tr style='line-height:50px'><td><label for='point'><b>PickupPoint</b></label></td><td>";
+    	form+="<select id='pickpoint' placeholder='Select pickup point' style='width:170px;'><option value='A'>A</option><option value='B'>B</option>";
+    	form+="<option value='C'>C</option><option value='D'>D</option><option value='E'>E</option></select></td>";
+    	form+="</tr ><tr><p id='demobook' style='color:red' align='center'></p></tr><tr style='line-height:50px'><td><label for='dpoint'><b>DropPoint</b></label></td>";
+    	form+="<td><select id='droppoint' placeholder='Select drop point' style='width:170px;'><option value='A'>A</option><option value='B'>B</option>";
+    	form+="<option value='C'>C</option><option value='D'>D</option><option value='E'>E</option></select></td>";
+    	form+="</tr ><tr style='line-height:50px'><td><label for='mobile'><b>PickupDate</b></label></td>";
+    	form+="<td><input type='datetime-local' style='width:165px;' name='time' id='pickdate' required></td></tr >";
+    	form+="<tr style='line-height:50px'><td><label for='Cid'><b>Enter CouponCode</b></label></td>";
+		form+="<td><input type='text' placeholder='Coupon Code' name='coupon' id='coupon'></td></tr>";
+    	form+="<tr style='line-height:50px'><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='booktaxi' name='users' value='BookTaxi'>Book</button></td><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='gobackfrombook'>Back</button></td></tr></table>";
+    	$("#bookinfo").html(form);
+    	$("#bookinfo").show();
+    });
+	$(document).on('click','#gobackfrombook',loginpage);
+	$(document).on('click','#booktaxi',function(){
+		var pickup=$("#pickpoint").val();
+		var drop=$("#droppoint").val();
+		var date=$("#pickdate").val();
+		var coupon=$("#coupon").val();
+		if(pickup===drop)
+		{
+			$("#errortiming").html("");
+			$("#errorpoints").html("Please enter correct points");
+			$("#errorpoints").show();
+			$("#bookinfo").show();
+		}
+		else
+		{
+			$.ajax({
+				type:'POST',
+				url:'/Taxi-Version2/connection?pickuppoint='+pickup+'&droppoint='+drop+'&date='+date+'&couponcode='+coupon+'&users=BookTaxi',
+				headers:{
+					Accept:"application/json; charset=utf-8",
+					"Content-Type" : "application/json; charset=utf-8"
+				},
+				success:function(result){
+					result+="<br><br>Kindly give Your feedBack!<br><br>";
+					result+="<button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='feedback'>FeedBack</button>";
+					$("#successfullbooking").html(result);
+					$("#successfullbooking").show();
+				}
+			});
+		}
+	});
+	$(document).on('click','#feedback',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		var form="<table align='center'><tr><td><textarea rows='4' cols='50' name='comment' id='feedtext' form='usrform'>Enter feedback..</textarea></td></tr><tr>";
+		form+="<td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='give' name='users' value='Userfeedback'>Give</button></td></tr></table>";
+		$("#renderfeedback").html(form);
+		$("#renderfeedback").show();
+	});
+	$(document).on('click','#give',function(){
+		var feedback=$("#feedtext").val();
+		$.ajax({
+			type:'POST',
+			url:'/Taxi-Version2/connection?feedbacktext='+feedback+'&users=StoreFeedback',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result)
+			{
+				$("#successfullfeedback").html(result);
+				$("#successfullfeedback").show();
+			}
+		});
+	});
+	$(document).on('click','#history',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		var form="<table align='center'><tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='taxiHistory' name='users' value='Taxi'>Taxi History</button></td></tr><tr>";
+			form+="<td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='userHistory' name='users' value='User'>User History</button></td></tr>";
+			form+="<tr><td><button style='width:100px;background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backhistory' name='users' value='User'>Back</button></td></tr>";
+		$("#historydiv").html(form);	
+		$("#historydiv").show();
+	});
+	$(document).on('click','#backhistory',loginpage);
+	$(document).on('click','#userHistory',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		$.ajax({
+			type:'GET',
+			url:'/Taxi-Version2/connection?users=User',			
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result)
+			{
+				var form="<table align='center'><tr style='line-height:50px'><td><label for='Uid'><b>UserId</b></label></td>";
+				form+="<td><input list='select' name='select'placeholder='Search..' id='getid'><datalist id='select' class='userlist'>";
+				for(i=0;i<result.length;i++)
+				{
+					form+="<option value='"+result[i].userId+"'>"+result[i].userName+",Mobile : "+result[i].mobileNumber+"</option>";
+				}
+				form+="</datalist></td></tr><tr style='line-height:50px'><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='get' name='usershistory' value='get'>Get</button></td></td><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backfromuserhistory' name='taxis' value='taxihistories'>Back</button></td></tr></table>";
+				$("#userHistorydiv").html(form);
+				$("#userHistorydiv").show();
+			}
+		});
+	});
+	$(document).on('click','#backfromuserhistory',loginpage);
+		$(document).on('click','#taxiHistory',function(){
+			 $(".hidediv").hide();
+			 $(".hidealerts").hide();
+			$.ajax({
+				type:'GET',
+				url:'/Taxi-Version2/connection?users=Taxi',
+				headers:{
+					Accept:"application/json; charset=utf-8",
+					"Content-Type" : "application/json; charset=utf-8"
+				},
+				success:function(result)
+				{
+					var form="<table align='center'><tr style='line-height:50px'><td><label for='Tid'><b>TaxiId</b></label></td>";
+					form+="<td><input list='selecttaxi' name='select' placeholder='Search..' id='gettaxiid'><datalist id='selecttaxi' class='userlist'>";
+					for(i=0;i<result.length;i++)
+					{
+						form+="<option value='"+result[i].id+"'>Mobile : "+result[i].mobileNumber+"</option>";
+					}
+					form+="<tr style='line-height:50px'><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='gettaxihistory' name='taxis' value='taxihistories'>Submit</button>";
+					form+="</td><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backfromtaxihistory' name='taxis' value='taxihistories'>Back</button></td></tr></table>";
+					$("#taxiHistorydiv").html(form);
+					$("#taxiHistorydiv").show();
+				}
+			});
+		});
+	$(document).on('click','#backfromtaxihistory',loginpage);
+	$(document).on('click','#get',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		var userId=$("#getid").val();
+		$.ajax({
+			type:'POST',
+			url:'/Taxi-Version2/connection?userid='+userId+'&users=GetUserHistory',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result){
+				var tbltop ="<table style='border-collapse: collapse;' align='center' width='100%'><tr style='border-bottom: 0.5px solid #ddd;border-top: 0.5px solid #ddd;'><th>TaxiNumber</th><th>Time</th><th>PickupPoint</th><th>DropPoint</th></tr>";
+				var main ="";
+				for (i = 0; i < result.length; i++){
+					 var time=new Date(result[i].time);
+		              main += "<tr style='border-bottom: 0.5px solid #ddd; text-align:center;'><td>"+result[i].taxiNumber+"</td><td>"+time.toString()+"</td><td>"+result[i].pickupPoint+"</td><td>"+result[i].dropPoint+"</td></tr>";
+		            }
+				 var tblbottom = "</table><table align='center'><tr><th><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backfromgettaxihistory'>Back</button></th></tr></table>";
+		         var tbl = tbltop + main + tblbottom;
+		         $("#renderuserhistory").html(tbl);
+		         $("#renderuserhistory").show();
+			}
+		});
+	});
+	$(document).on('click','#gettaxihistory',function(){
+		 $(".hidediv").hide();
+		 $(".hidealerts").hide();
+		var taxiId=$("#gettaxiid").val();
+		$.ajax({
+			type:'POST',
+			url:'/Taxi-Version2/connection?taxiid='+taxiId+'&users=GetTaxiHistory',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result){
+				var tbltop ="<table style='border-collapse: collapse;' align='center' width='100%'><tr style='border-bottom: 0.5px solid #ddd;border-top: 0.5px solid #ddd;'><th>UserName</th><th>UserNumber</th><th>Time</th><th>PickupPoint</th><th>DropPoint</th></tr>";
+				var main ="";
+				for (i = 0; i < result.length; i++){
+					 var time=new Date(result[i].time);
+		              main += "<tr style='border-bottom: 0.5px solid #ddd; text-align:center;'><td>"+result[i].userName+"</td><td>"+result[i].userNumber+"</td><td>"+time.toString()+"</td><td>"+result[i].pickupPoint+"</td><td>"+result[i].dropPoint+"</td></tr>";
+		            }
+				 var tblbottom = "</table><table align='center'><tr><th><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='backfromgettaxihistory'>Back</button></th></tr></table>";
+		         var tbl = tbltop + main + tblbottom;
+		         $("#rendertaxihistory").html(tbl);
+		         $("#rendertaxihistory").show();
+			}
+		});
+	});
+	$(document).on('click','#backfromgetuserhistory',loginpage);
+	$(document).on('click','#backfromgettaxihistory',loginpage);
+	$(document).on('click','#adduser',function(){
+		$("#userlogin").hide();
+		$("#adduser").hide();
+		var form="<table align='center'><div><tr style='line-height:50px'><td><label for='Mobile'><b>MobileNumber</b></label></td>";
+		form+="<td><input type='text' maxlength='10' placeholder='Enter your mobile' name='mobile' id='mobile' required></td></tr><tr><p id='demomobile' style='color:red' align='center'></p></tr></div>";
+		form+="<tr style='line-height:50px'><td><label for='name'><b>Name</b></label></td><td>";
+		form+="<input type='text' placeholder='Enter the name' name='name' id='uname' required></td>";
+		form+="<tr style='line-height:50px'><td><label for='password'><b>Password</b></label></td><td>";
+		form+="<input type='password' placeholder='Enter the Password' name='name' id='pword' required></td><td><input type='checkbox' onclick='showPassword()'>Show Password</td>";
+		form+="<tr style='line-height:50px'><td><label for='confirmpassword'><b>ConfirmPassword</b></label></td><td>";
+		form+="<input type='password' placeholder='ReEnter the Password' name='name' id='cpword' required></td>";
+		form+="</tr><tr style='line-height:50px'><td><label for='type'><b>UserType</b></label></td><td>";
+		form+="<select name='type' id='usertype' style='width: 170px;'><option value='user'>User</option><option value='admin'>Admin</option><option value='driver'>Driver</option></select>";
+		form+="</tr><tr style='line-height:50px'><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='submituser' name='users' value='SubmitUser'>Submit</button></td><td><button style='background-color:#94DAFF;border-radius: 4px; border:none; padding: 5px 5px;' id='back'>Back</button></td></tr></table>";
+		$("#createuser").html(form);
+		$("#createuser").show();
+	});
+	$(document).on('click','#back',function(){
+		window.history.go(0);
+	});
+	$(document).on('click','#goback',taxilist);
+	$(document).on('click','#submituser',function(){
+		$("#successmessageuser").show();
+		var mobile=$("#mobile").val();
+		var name=$("#uname").val();
+		var wallet=$("#wallet").val();
+		var password=$("#pword").val();
+		var cpassword=$("#cpword").val();
+		var type=$("#usertype").val();
+		var mobileresult=checkmobile(mobile);
+		if(password===cpassword)
+		{
+			$("#passwordcheck").html("");
+			var passwordresult=checkpassword(password);
+			var validateresult=validateUser(mobile,name,wallet,password);
+			if(mobileresult && validateresult &&passwordresult)
+			{
+				$("#passwordcheck").html("");
+				$("#mobilecheck").html("");
+				$("#amountcheck").html("");
+				$("#demomobile").html("");
+				$.ajax({
+					type:'POST',
+					url:'/Taxi-Version2/connection?mobile='+mobile+'&name='+name+'&password='+password+'&usertype='+type+'&users=SubmitNewUser',
+					headers:{
+						Accept:"application/json; charset=utf-8",
+						"Content-Type" : "application/json; charset=utf-8"
+					},
+					success:function(result){
+						$("#successmessageuser").html(result);
+					}
+				});
+			}
+			else if(!mobileresult && validateresult&& passwordresult)
+			{
+				$("#mobilecheck").html("Please Enter correct mobile number,Mobile Number Should contain 10digits Without Characters!");
+				$("#passwordcheck").html("");
+				$("#mobilecheck").show();
+			}
+			else if(mobileresult && validateresult && !passwordresult)
+			{
+				$("#mobilecheck").html("");
+				$("#passwordcheck").html("Password Should contain atleast a lower case,an upper case,a number,a special character with minimum 8 digits!");
+				$("#passwordcheck").show();
+			}
+			else if(!mobileresult && validateresult &&!passwordresult)
+			{
+				$("#mobilecheck").html("Please Enter correct mobile number,Mobile Number Should contain 10digits Without Characters!");
+				$("#passwordcheck").html("Password Should contain atleast a lower case,an upper case,a number,a special character with minimum 8 digits!");
+				$("#mobilecheck").show();
+				$("#passwordcheck").show();
+			}
+		}
+		else
+		{
+			$("#mobilecheck").html("");
+			$("#demomobile").html("");
+			$("#passwordcheck").html("Passwords does not match");
+			$("#passwordcheck").show();
+		}
+	});
+});
+</script>
+</body>
+</html>
